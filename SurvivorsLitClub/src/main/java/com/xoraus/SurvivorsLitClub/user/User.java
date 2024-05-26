@@ -1,5 +1,6 @@
 package com.xoraus.SurvivorsLitClub.user;
 
+import com.xoraus.SurvivorsLitClub.role.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,6 +38,9 @@ public class User implements UserDetails, Principal {
     private boolean accountLocked;
     private boolean enabled;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<Role> roles;
+
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -47,7 +52,10 @@ public class User implements UserDetails, Principal {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return this.roles
+                .stream()
+                .map(role -> (GrantedAuthority) role::getName)
+                .toList();
     }
 
     @Override
