@@ -1,13 +1,17 @@
 package com.xoraus.SurvivorsLitClub.auth;
 
 
+import com.xoraus.SurvivorsLitClub.email.EmailService;
+import com.xoraus.SurvivorsLitClub.email.EmailTemplateName;
 import com.xoraus.SurvivorsLitClub.role.RoleRepository;
+import com.xoraus.SurvivorsLitClub.security.JwtService;
 import com.xoraus.SurvivorsLitClub.user.Token;
 import com.xoraus.SurvivorsLitClub.user.TokenRepository;
 import com.xoraus.SurvivorsLitClub.user.User;
 import com.xoraus.SurvivorsLitClub.user.UserRepository;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +26,10 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
+    private final EmailService emailService;
+
+    @Value("${application.mailing.frontend.activateUrl}")
+    private String activateUrl;
 
     public void register(RegistrationRequest request) throws MessagingException {
         var userRole = roleRepository.findByName("USER")
@@ -39,8 +47,16 @@ public class AuthenticationService {
         sendValidationEmail(user);
     }
 
-    private void sendValidationEmail(User user) {
+    private void sendValidationEmail(User user) throws MessagingException {
         var newToken = generateAndSaveActivationToken(user);
+        emailService.sendEmail(
+                user.getEmail(),
+                user.getFullName(),
+                EmailTemplateName.ACTIVATE_ACCOUNT,
+                activateUrl,
+                newToken,
+                "Account Activation"
+        );
 
     }
 

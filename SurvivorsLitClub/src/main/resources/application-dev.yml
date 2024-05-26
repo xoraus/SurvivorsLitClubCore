@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/x_books_network
+    url: jdbc:postgresql://localhost:5432/survival_lit_club
     username: username
     password: password
     driver-class-name: org.postgresql.Driver
@@ -13,24 +13,29 @@ spring:
         format_sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    mail:
-      host: localhost
-      port: 1025
-      protocol: smtp
-      username: maildev
-      password: maildev
-      properties:
-        mail:
-          smtp:
-            trust: "*"
-            auth: true
-            starttls:
-              enable: true
-            connectiontimeout: 5000
-            timeout: 3000
-            writetimeout: 5000
-  application:
-    security:
-      jwt:
-        secret-key: 24aaa2a91725978e844855adc98832e808f96c59ad9f61abd026c9df88bdde9b
-        expiration: 86400000
+
+  mail:
+    host: localhost
+    port: 1025
+    protocol: smtp
+    username: maildev
+    password: maildev
+    properties:
+      mail:
+        smtp:
+          trust: "*"
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+
+application:
+  security:
+    jwt:
+      secret-key: 24aaa2a91725978e844855adc98832e808f96c59ad9f61abd026c9df88bdde9b
+      expiration: 86400000
+  mailing:
+    frontend:
+      activateUrl: http://localhost:4200/activate-account
