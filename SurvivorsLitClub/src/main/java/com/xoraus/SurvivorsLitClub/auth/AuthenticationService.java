@@ -14,10 +14,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 
@@ -69,11 +72,13 @@ public class AuthenticationService {
         String generatedToken = generateActivationCode(6);
         var token = Token.builder()
                 .token(generatedToken)
+                .createdAt(LocalDateTime.now())
+                .expiresAt(LocalDateTime.now().plusMinutes(15))
                 .user(user)
                 .build();
         tokenRepository.save(token);
-        return generatedToken;
 
+        return generatedToken;
     }
 
     private String generateActivationCode(int length) {
@@ -96,5 +101,22 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
+    }
+
+    @Transactional
+    public void activateAccount(String token) throws MessagingException {
+        Token savedToken = tokenRepository.findByToken(token)
+                .orElseThrow(() -> new RuntimeException("Invalid token"));
+        if(LocalDateTime.now().isAfter(savedToken.getExpiresAt())){
+            throw new RuntimeException("Token expired");
+        }
+        var user = userRepository.findById(Math.toIntExact(savedToken.getUser().getId()))
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        user.setEnabled(true);
+        userRepository.save(user);
+
+        savedToken.setValidatedAt(LocalDateTime.now());
+        tokenRepository.save(savedToken);
     }
 }
