@@ -25,6 +25,11 @@ public class AuthenticationController {
         return ResponseEntity.accepted().build();
     }
 
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody @Valid AuthenticationRequest request){
+
+        return ResponseEntity.ok(authenticationService.authenticate(request));
+    }
+
 
 
 }
