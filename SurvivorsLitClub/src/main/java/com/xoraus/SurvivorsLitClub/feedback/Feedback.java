@@ -1,7 +1,10 @@
 package com.xoraus.SurvivorsLitClub.feedback;
 
+import com.xoraus.SurvivorsLitClub.book.Book;
 import com.xoraus.SurvivorsLitClub.common.BaseEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,4 +20,8 @@ import lombok.experimental.SuperBuilder;
 public class Feedback extends BaseEntity {
     private Double note;
     private String comment;
+
+    @ManyToOne
+    @JoinColumn(name = "book_id")
+    private Book book;
 }

@@ -1,5 +1,7 @@
 package com.xoraus.SurvivorsLitClub.user;
 
+import com.xoraus.SurvivorsLitClub.book.Book;
+import com.xoraus.SurvivorsLitClub.history.BookTransactionHistory;
 import com.xoraus.SurvivorsLitClub.role.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -42,6 +44,12 @@ public class User implements UserDetails, Principal {
 
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
+
+    @OneToMany(mappedBy = "owner")
+    private List<Book> books;
+
+    @OneToMany(mappedBy = "user")
+    private List<BookTransactionHistory> histories;
 
 
     @CreatedDate
