@@ -1,6 +1,7 @@
 package com.xoraus.SurvivorsLitClub.book;
 
 import com.xoraus.SurvivorsLitClub.common.PageResponse;
+import com.xoraus.SurvivorsLitClub.exception.OperationNotPermittedException;
 import com.xoraus.SurvivorsLitClub.history.BookTransactionHistory;
 import com.xoraus.SurvivorsLitClub.history.BookTransactionHistoryRepository;
 import com.xoraus.SurvivorsLitClub.user.User;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.xoraus.SurvivorsLitClub.book.BookSpecification.withOwnerId;
 
@@ -115,10 +117,16 @@ public class BookService {
         );
     }
 
-    public ResponseEntity<Integer> updateShareableStatus(
-            @PathVariable("book-id") Integer bookId,
-            Authentication connectedUser
-    ) {
-        return ResponseEntity.ok(bookRepository.updateShareableStatus(bookId, connectedUser));
+
+    public Integer updateShareableStatus(Integer bookId, Authentication connectedUser) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException("No book found with ID:: " + bookId));
+        User user = ((User) connectedUser.getPrincipal());
+        if (!Objects.equals(book.getOwner().getId(), user.getId())) {
+            throw new OperationNotPermittedException("You cannot update others books shareable status");
+        }
+        book.setShareable(!book.isShareable());
+        bookRepository.save(book);
+        return bookId;
     }
 }
