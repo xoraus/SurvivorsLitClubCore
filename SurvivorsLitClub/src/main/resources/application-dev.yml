@@ -12,7 +12,6 @@ spring:
       hibernate:
         format_sql: true
     database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
 
   mail:
     host: localhost
@@ -35,11 +34,15 @@ application:
   security:
     jwt:
       secret-key: 24aaa2a91725978e844855adc98832e808f96c59ad9f61abd026c9df88bdde9b
-      expiration: 86400000
+      expiration: 86400000 # 1 day
+      refresh-token:
+        expiration: 604800000 # 7 days
   mailing:
     frontend:
       activateUrl: http://localhost:4200/activate-account
   file:
     upload:
       photos-output-path: ./uploads
-
+logging:
+  level:
+      root: INFO
