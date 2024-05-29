@@ -19,7 +19,7 @@ public class FeedbackService {
     private final BookRepository bookRepository;
     private final FeedbackMapper feedbackMapper;
 
-    public Integer save(FeedbackRequest request, Authentication connectedUser) {
+    public Integer saveFeedback(FeedbackRequest request, Authentication connectedUser) {
         Book book = bookRepository.findById(request.bookId())
                 .orElseThrow(() -> new EntityNotFoundException("No book found with ID:: " + request.bookId()));
         if (book.isArchived() || !book.isShareable()) {
