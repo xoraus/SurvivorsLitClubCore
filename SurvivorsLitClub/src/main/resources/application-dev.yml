@@ -39,3 +39,7 @@ application:
   mailing:
     frontend:
       activateUrl: http://localhost:4200/activate-account
+  file:
+    upload:
+      photos-output-path: ./uploads
+
