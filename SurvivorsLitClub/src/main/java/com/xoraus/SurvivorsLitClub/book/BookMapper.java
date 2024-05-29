@@ -1,5 +1,6 @@
 package com.xoraus.SurvivorsLitClub.book;
 
+import com.xoraus.SurvivorsLitClub.file.FileUtils;
 import com.xoraus.SurvivorsLitClub.history.BookTransactionHistory;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,7 @@ public class BookMapper {
                 .archived(book.isArchived())
                 .shareable(book.isShareable())
                 .owner(book.getOwner().getFullName())
+                .cover(FileUtils.readFileFromLocation(book.getBookCover()))
                 .build();
     }
 
