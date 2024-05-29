@@ -1,0 +1,31 @@
+services:
+  postgres:
+    container_name: postgres-sql-SLC
+    image: postgres
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: survival_lit_club
+    volumes:
+      - postgres-data:/var/lib/postgresql/data  # Clearer volume name
+    ports:
+      - 5432:5432  # Map port only if necessary for development
+    networks:
+      - xbn-network
+    restart: unless-stopped
+
+  mail-dev:
+    container_name: mail-dev-SLC
+    image: maildev/maildev
+    ports:
+      - 1080:1080  # Map port only if necessary for development
+      - 1025:1025  # Adjust port if another service uses 1025
+    # Omit network section if `mail-dev` doesn't need to connect to `postgres`
+
+networks:
+  xbn-network:
+    driver: bridge
+
+volumes:
+  postgres-data:  # Clearer volume name
+    driver: local
